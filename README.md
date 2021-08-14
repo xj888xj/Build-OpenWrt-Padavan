@@ -9,9 +9,9 @@
 - Click the `Run workflow` button.
 - When the build is complete, click the `Artifacts` button in the upper right corner of the Actions page to download the binaries.
 - 单击使用此模板按钮以创建新存储库。
--.config使用Lean 的 OpenWrt源代码生成文件。（您可以通过工作流文件中的环境变量进行更改。）
--将.config文件推送到 GitHub 存储库。
--在Actions里单击Run workflow按钮。
--编译完成后，单击Artifacts操作页面右上角的按钮下载文件。
+- .config使用Lean 的 OpenWrt源代码生成文件。（您可以通过工作流文件中的环境变量进行更改。）
+- 将.config文件推送到 GitHub 存储库。
+- 在Actions里单击Run workflow按钮。
+- 编译完成后，单击Artifacts操作页面右上角的按钮下载文件。
 
 
