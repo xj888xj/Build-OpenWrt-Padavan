@@ -1,0 +1,52 @@
+
+name: OpenWrt-CI
+
+on:
+  workflow_dispatch:   
+  release:                                                   
+    types: [published]
+  watch:                                                      
+    types: [started] 
+
+env:
+  CONFIG_FILE: newifi3.config
+  DIY_P1_SH: diy-part1.sh
+  DIY_P2_SH: diy-part2.sh
+
+jobs:
+
+  build:
+    name: Build OpenWrt firmware
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Space cleanup
+        run: | 
+          apt-get update
+          apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 python2.7 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf wget curl swig rsync
+          git clone https://github.com/coolsnowwolf/lede.git openwrt
+          cd lede
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+          [ -e files ] && mv files openwrt/files
+          [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
+          make defconfig
+          make -j8 download V=s
+          make -j1 V=s 
+          
+      - name: Upload OpenWrt
+        uses: actions/upload-artifact@v2
+        with:
+          name: OpenWrt
+          path: /openwrt/bin/targets/*/*
+
+      - name: Upload release asset
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: /openwrt/bin/targets/*/*
+          tag: ${{ github.ref }}
+          file_glob: true
+
