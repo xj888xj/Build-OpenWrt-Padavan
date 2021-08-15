@@ -16,11 +16,11 @@ env:
   REPO_BRANCH: master
 
 on:
-  workflow_dispatch:        
-  release:                                                     
-    types: [published]
-  watch:                                                        
-    types: [started] 
+ # workflow_dispatch:        
+ # release:                                                     
+ #   types: [published]
+ # watch:                                                        
+ #   types: [started] 
 
 jobs:
   check:
