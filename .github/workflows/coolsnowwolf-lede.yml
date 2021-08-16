@@ -1,5 +1,5 @@
 
-name: coolsnowwolf-openwrt
+name: coolsnowwolf-lede
 
 on:
   repository_dispatch:
