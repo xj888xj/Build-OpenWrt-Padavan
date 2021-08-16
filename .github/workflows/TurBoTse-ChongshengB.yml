@@ -1,5 +1,5 @@
 
-name: ChongshengB_Padavan_TurBoTse
+name: TurBoTse-ChongshengB
 
 on:
   workflow_dispatch: 
@@ -16,12 +16,53 @@ env:
   toolchain_dir: /opt/rt-n56u/toolchain-mipsel/toolchain-3.4.x  # 工具链目录
   toolchain_pkg: mipsel-linux-uclibc.tar.xz
   toolchain_url: https://github.com/TurBoTse/padavan-toolchain/releases/download/v1.0
+  custom_modify: true                                           # 修改文件
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   UPLOAD_COWTRANSFER: false
   UPLOAD_WETRANSFER: false
   UPLOAD_RELEASE: true
-
+ 
+  ENABLED_CFG: |
+    CONFIG_FIRMWARE_INCLUDE_LANG_CN
+    CONFIG_FIRMWARE_ENABLE_IPV6
+  DISABLED_CFG: |
+    CONFIG_FIRMWARE_INCLUDE_LANG_UK
+    CONFIG_FIRMWARE_INCLUDE_TCPDUMP
+    CONFIG_FIRMWARE_INCLUDE_SCUTCLIENT
+    CONFIG_FIRMWARE_INCLUDE_GDUT_DRCOM
+    CONFIG_FIRMWARE_INCLUDE_DOGCOM
+    CONFIG_FIRMWARE_INCLUDE_MINIEAP
+    CONFIG_FIRMWARE_INCLUDE_NJIT_CLIENT
+    CONFIG_FIRMWARE_INCLUDE_NAPT66
+    CONFIG_FIRMWARE_INCLUDE_VLMCSD
+    CONFIG_FIRMWARE_INCLUDE_TTYD
+    CONFIG_FIRMWARE_INCLUDE_HTOP
+    CONFIG_FIRMWARE_INCLUDE_NANO
+    CONFIG_FIRMWARE_INCLUDE_MENTOHUST
+    CONFIG_FIRMWARE_INCLUDE_SHADOWSOCKS
+    CONFIG_FIRMWARE_INCLUDE_SSSERVER
+    CONFIG_FIRMWARE_INCLUDE_SOFTETHERVPN_SERVER
+    CONFIG_FIRMWARE_INCLUDE_SOFTETHERVPN_CLIENT
+    CONFIG_FIRMWARE_INCLUDE_SOFTETHERVPN_CMD
+    CONFIG_FIRMWARE_INCLUDE_DNSFORWARDER
+    CONFIG_FIRMWARE_INCLUDE_FRPC
+    CONFIG_FIRMWARE_INCLUDE_FRPS
+    CONFIG_FIRMWARE_INCLUDE_TUNSAFE
+    CONFIG_FIRMWARE_INCLUDE_SSOBFS
+    CONFIG_FIRMWARE_INCLUDE_V2RAY
+    CONFIG_FIRMWARE_INCLUDE_TROJAN
+    CONFIG_FIRMWARE_INCLUDE_ADBYBY
+    CONFIG_FIRMWARE_INCLUDE_KOOLPROXY
+    CONFIG_FIRMWARE_INCLUDE_SMARTDNS
+    CONFIG_FIRMWARE_INCLUDE_SMARTDNSBIN
+    CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME
+    CONFIG_FIRMWARE_INCLUDE_ALIDDNS
+    CONFIG_FIRMWARE_INCLUDE_CADDY
+    CONFIG_FIRMWARE_INCLUDE_CADDYBIN
+    CONFIG_FIRMWARE_INCLUDE_WYY
+    CONFIG_FIRMWARE_INCLUDE_WYYBIN
+    CONFIG_FIRMWARE_INCLUDE_ZEROTIER
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
@@ -54,24 +95,48 @@ jobs:
           sudo apt install libtool-bin gperf python-docutils autopoint gettext
           sudo timedatectl set-timezone 'Asia/Shanghai'  # 设置时区
           
-      - name: Clone source code                 # 克隆源码
-        run: |                         
+      - name: Clone source code
+        run: |                         # 克隆源码
           git clone --depth=1 $src_git $build_dir
-          cd $build_dir
           
-      - name: Prepare toolchain                 # 下载预编译的构建工具链
-        run: |                         
+      - name: Prepare toolchain
+        run: |                         # 下载预编译的构建工具链
           # cd $build_dir/toolchain-mipsel
           # sh dl_toolchain.sh
           mkdir -p $toolchain_dir && mkdir -p $images_dir
           curl -LO ${toolchain_url}/${toolchain_pkg}
           tar -xf $toolchain_pkg -C $toolchain_dir
           
-      - name: Start build
-        run: |
-          cd /opt/rt-n56u/trunk
-          for m in $targets; do sudo ./build_firmware_ci $m; \
-          if [ $? = 0 ]; then cp -f images/*.trx ${images_dir}/$m.trx; else exit 1; fi; \
+      - name: Modify configs
+        run: |                         # 修改配置文件
+          cd $config_dir
+          for m in $targets; do if [ -f $m.config ]; then \
+          for n in $ENABLED_CFG; do sed -i "/${n}/c${n}=y" $m.config; done; \
+          for n in $DISABLED_CFG; do sed -i "/${n}/c${n}=n" $m.config; done; \
+          fi; done
+          
+      - name: Copy custom modify
+        if: env.custom_modify == 'true'
+        run: |                         # 拷贝文件并修改
+          for m in $targets; do if [ ! -f public/$m.sh ]; then echo "public/$m.sh 未找到"
+          else
+            if [ -f public/$m.sh ]; then cp -f public/$m.sh $work_dir; echo "$m.sh 拷贝成功"; fi; fi; done; \
+          for m in $targets; do  if [ ! -f public/$m.config ]; then echo "public/$m.config 未找到"
+          else
+            if [ -f public/$m.config ]; then cp -f public/$m.config $config_dir/$m.config; echo "$m.config 已修改"; fi; fi; done; \
+          if [ -f public/public.sh ]; then cp -f public/public.sh $work_dir; fi
+          if [ -d chongshengB/config ]; then cp -f chongshengB/config/* $work_dir; fi
+          if [ -d chongshengB/scripts ]; then cp -f chongshengB/scripts/* $work_dir; fi
+          if [ -d chongshengB/modify ]; then cp -rf chongshengB/modify/* $work_dir; fi
+          cd $work_dir
+          for m in $targets; do if [ -f $m.config ]; then echo "拷贝 $m.config"; cp -f ./$m.config $config_dir/$m.config; fi; done; \
+          for m in $targets; do if [ -f public.sh ]; then echo "执行 public.sh"; sh ./public.sh; fi; if [ -f $m.sh ]; then echo "执行 $m.sh"; sh ./$m.sh; fi; done; \
+          
+      - name: Start build firmware
+        run: |                         # 执行构建固件
+          cd $work_dir
+          for m in $targets; do fakeroot ./build_firmware_ci $m; \
+          if [ $? = 0 ]; then cp -f images/*.trx $images_dir/ChongshengB_${m}_$(date +%Y%m%d).trx; else exit 1; fi; \
           ./clear_tree_simple >/dev/null 2>&1; done
           
       - name: Upload images to Artifact
