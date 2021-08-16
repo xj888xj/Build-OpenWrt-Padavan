@@ -38,6 +38,7 @@ jobs:
     - name: Clone source code
       run: |
         git clone --depth=1 https://github.com/chongshengB/rt-n56u.git /opt/rt-n56u
+        cd $build_dir
         # cd $build_dir/toolchain-mipsel
         # sh dl_toolchain.sh
         mkdir -p $toolchain_dir && mkdir -p $images_dir
