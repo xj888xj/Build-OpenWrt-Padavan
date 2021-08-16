@@ -47,7 +47,7 @@ jobs:
       run: |
         cd $work_dir
         sudo ./clear_tree
-        fakeroot ./build_firmware_ci $TNAME
+        sudo ./build_firmware_ci $TNAME
         sudo mv -f images/*.trx /opt/images/
     - name : Upload packages
       uses: actions/upload-artifact@master
