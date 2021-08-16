@@ -44,8 +44,8 @@ jobs:
 
       - name: Update feeds
         run: |
-          ./scripts/feeds update -a
-          ./scripts/feeds install -a
+          sudo ./scripts/feeds update -a
+          sudo ./scripts/feeds install -a
 
       - name: Generate configuration file
         run: |
