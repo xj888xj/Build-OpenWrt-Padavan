@@ -11,7 +11,7 @@ on:
 env: 
   CONFIG_FILE: newifid2.config
   REPO_URL: https://github.com/Lienol/openwrt
-  REPO_BRANCH: main
+  REPO_BRANCH: master
 
 jobs:
   build:
