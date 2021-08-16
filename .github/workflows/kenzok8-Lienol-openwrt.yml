@@ -9,7 +9,7 @@ on:
     types: [started] 
     
 env: 
-  CONFIG_FILE: 'newifid2.config'
+  CONFIG_FILE: newifid2.config
   REPO_URL: https://github.com/Lienol/openwrt
   REPO_BRANCH: main
 
