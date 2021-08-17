@@ -65,7 +65,7 @@ jobs:
     - name: 自定义配置文件Lean
       run: |
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        cd openwrt 
+        cd openwrt && make defconfig 
         ./scripts/feeds update -a
         ./scripts/feeds install -a
         make defconfig
