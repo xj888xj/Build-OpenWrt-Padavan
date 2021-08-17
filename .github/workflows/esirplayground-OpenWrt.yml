@@ -1,5 +1,5 @@
 
-name: esirplayground-OpenWrt-NewifiD2
+name: esirplayground-OpenWrt-openwrt
 
 on: 
   repository_dispatch:
