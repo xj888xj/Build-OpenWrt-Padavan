@@ -1,5 +1,5 @@
 
-name: Lienol-openwrt
+name: kenzok8-Lienol-openwrt
 
 on: 
   workflow_dispatch:        
