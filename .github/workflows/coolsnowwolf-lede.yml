@@ -1,5 +1,5 @@
 
-name: Lean_5.4内核
+name: coolsnowwolf-lede
 
 on: 
   workflow_dispatch:        
