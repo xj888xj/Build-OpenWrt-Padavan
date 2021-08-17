@@ -1,5 +1,5 @@
 
-name: esirplayground-OpenWrt-openwrt
+name: OpenWrt-openwrt
 
 on: 
   repository_dispatch:
