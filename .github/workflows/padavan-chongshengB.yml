@@ -2,11 +2,11 @@
 name: padavan-chongshengB
 
 on:
-  #workflow_dispatch: 
-  #release:
-    #types: [published]
-  #watch:           
-    #types: [started]  
+  workflow_dispatch: 
+  release:
+    types: [published]
+  watch:           
+    types: [started]  
 
 env:
   build_dir: /opt/rt-n56u                                       # 源码目录
@@ -22,7 +22,7 @@ env:
   UPLOAD_FIRMWARE: true
   UPLOAD_COWTRANSFER: false
   UPLOAD_WETRANSFER: false
-  UPLOAD_RELEASE: true
+  UPLOAD_RELEASE: false
  
   ENABLED_CFG: |
     CONFIG_FIRMWARE_INCLUDE_LANG_CN
@@ -162,6 +162,7 @@ jobs:
           echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
           
       - name: Upload images to Releases
+        if: env.upload_wetransfer == 'true' && success()
         uses: svenstaro/upload-release-action@2.2.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
