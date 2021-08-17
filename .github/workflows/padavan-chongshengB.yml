@@ -2,11 +2,12 @@
 name: padavan-chongshengB
 
 on:
-  workflow_dispatch: 
-  release:
-    types: [published]
-  watch:           
-    types: [started]  
+#  workflow_dispatch: 
+#  release:
+#    types: [published]
+#  watch:           
+#    types: [started]  
+
 env:
   build_dir: /opt/rt-n56u                                       # 源码目录
   images_dir: /opt/images                                       # 固件目录
