@@ -11,6 +11,7 @@ on:
 env: 
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
+  CONFIG_FILE: newifid2.config
 
 jobs:
   build:
@@ -66,8 +67,6 @@ jobs:
         git clone https://github.com/xiaorouji/openwrt-passwall package/passwall
         git clone https://github.com/kenzok8/litte package/litte     
     - name: 自定义配置文件Lean
-      env:
-        CONFIG_FILE: 'newifid2.config'
       run: |
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         chmod +x ./customize.sh && ./customize.sh
