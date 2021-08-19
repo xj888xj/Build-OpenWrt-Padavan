@@ -123,7 +123,6 @@ jobs:
           ./clear_tree_simple >/dev/null 2>&1; done
           
       - name: Upload images to Artifact
-        if: env.upload_firmware == 'true' && success()
         uses: actions/upload-artifact@v2.2.1
         with:
           name: padavan_${{ env.build_variant }}
@@ -144,7 +143,6 @@ jobs:
           echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
           
       - name: Upload images to Releases
-        if: env.upload_release == 'true' && success()
         uses: svenstaro/upload-release-action@2.2.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
