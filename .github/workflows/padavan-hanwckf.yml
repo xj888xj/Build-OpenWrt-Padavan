@@ -1,4 +1,4 @@
-name: hanwckf-padavan
+name: padavan-hanwckf
  
 on:
   workflow_dispatch:        
