@@ -1,5 +1,5 @@
 
-name: padavan-chongshengB
+name: TurBoTse-ChongshengB
 
 on:
   workflow_dispatch: 
@@ -7,7 +7,6 @@ on:
     types: [published]
   watch:           
     types: [started]  
-
 env:
   build_dir: /opt/rt-n56u                                       # 源码目录
   images_dir: /opt/images                                       # 固件目录
@@ -17,12 +16,13 @@ env:
   toolchain_dir: /opt/rt-n56u/toolchain-mipsel/toolchain-3.4.x  # 工具链目录
   toolchain_pkg: mipsel-linux-uclibc.tar.xz
   toolchain_url: https://github.com/TurBoTse/padavan-toolchain/releases/download/v1.0
-  custom_modify: true                                           # 修改文件
+  htop_url: https://github.com/xj888xj/rt-n56u-hanwckf/blob/master/trunk/user/htop/htop-3.0.2.tar.gz
+  custom_modify: true 
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   UPLOAD_COWTRANSFER: false
   UPLOAD_WETRANSFER: false
-  UPLOAD_RELEASE: false
+  UPLOAD_RELEASE: true
  
   ENABLED_CFG: |
     CONFIG_FIRMWARE_INCLUDE_LANG_CN
@@ -99,6 +99,7 @@ jobs:
       - name: Clone source code
         run: |                         # 克隆源码
           git clone --depth=1 $src_git $build_dir
+          git clone --depth=1 $htop_url $build_dir/trunk/user/htop
           
       - name: Prepare toolchain
         run: |                         # 下载预编译的构建工具链
@@ -115,7 +116,7 @@ jobs:
           for n in $ENABLED_CFG; do sed -i "/${n}/c${n}=y" $m.config; done; \
           for n in $DISABLED_CFG; do sed -i "/${n}/c${n}=n" $m.config; done; \
           fi; done
-  
+
       - name: Start build firmware
         run: |                         # 执行构建固件
           cd $work_dir
@@ -124,7 +125,7 @@ jobs:
           ./clear_tree_simple >/dev/null 2>&1; done
           
       - name: Upload images to Artifact
-        #if: ${{ success() }}
+        if: env.upload_cowtransfer == 'true' && success()
         uses: actions/upload-artifact@v2.2.1
         with:
           name: padavan_${{ env.build_variant }}
@@ -145,7 +146,7 @@ jobs:
           echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
           
       - name: Upload images to Releases
-        if: env.upload_wetransfer == 'true' && success()
+        if: env.upload_cowtransfer == 'true' && success()
         uses: svenstaro/upload-release-action@2.2.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
