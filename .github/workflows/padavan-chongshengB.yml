@@ -99,7 +99,7 @@ jobs:
       - name: Clone source code
         run: |                         # 克隆源码
           git clone --depth=1 $src_git $build_dir
-          git clone --depth=1 $htop_url $build_dir/trunk/user/htop
+          #git clone --depth=1 $htop_url $build_dir/trunk/user/htop
           
       - name: Prepare toolchain
         run: |                         # 下载预编译的构建工具链
