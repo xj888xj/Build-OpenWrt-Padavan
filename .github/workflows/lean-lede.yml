@@ -85,5 +85,5 @@ jobs:
     - name : 上传固件
       uses: actions/upload-artifact@main
       with:
-        name: Lean
+        name: coolsnowwolf-lede
         path: openwrt/bin
