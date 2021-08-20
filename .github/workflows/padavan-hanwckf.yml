@@ -75,6 +75,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ env.images_dir }}/*.trx
-          tag: ${{ env.release_tag}}
+          tag: ${{ env.release_tag }}
           overwrite: true
           file_glob: true
