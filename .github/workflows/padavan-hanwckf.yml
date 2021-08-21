@@ -59,7 +59,7 @@ jobs:
         run: |
           ls -lh ${images_dir}
           GIT_VERSION=`git rev-parse --short=7 HEAD 2>/dev/null` && [ -n "$GIT_VERSION" ] && \
-          image_name=hanwckf_${build_variant}_${date +%Y%m%d} || image_name=hanwckf_${build_variant}
+          image_name=${build_variant}_${date +%Y%m%d} || image_name=${build_variant}
           cd ${images_dir}; md5sum *.trx |tee md5sum.txt; 7z a -mx=9 ${image_name}.7z ./*
           echo "image_name=${image_name}" >> $GITHUB_ENV
           
