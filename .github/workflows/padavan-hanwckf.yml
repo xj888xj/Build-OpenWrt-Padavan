@@ -1,4 +1,4 @@
-name: padavan-hanwckf
+name: hanwckf-padavan-CI
  
 on:
   workflow_dispatch:        
@@ -39,36 +39,31 @@ jobs:
           cd /opt/rt-n56u/toolchain-mipsel
           sudo sh dl_toolchain.sh
           #sudo ./clean_toolchain
-          #sudo ./build_toolchain 
-          
+          #sudo ./build_toolchain          
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'yes' }}
         with:
           limit-access-to-actor: true
-          
       - name: Start build
         run: |
           cd /opt/rt-n56u/trunk
           mkdir -p ${images_dir}
           for m in $targets; do fakeroot ./build_firmware_ci $m; \
-          if [ $? = 0 ]; then cp -f images/*.trx ${images_dir}/hanwckf_$m_$(date +%Y%m%d).trx; else exit 1; fi; \
+          if [ $? = 0 ]; then cp -f images/*.trx ${images_dir}/$m.trx; else exit 1; fi; \
           ./clear_tree_simple >/dev/null 2>&1; done
-          
       - name: Create archive
         run: |
           ls -lh ${images_dir}
           GIT_VERSION=`git rev-parse --short=7 HEAD 2>/dev/null` && [ -n "$GIT_VERSION" ] && \
-          image_name=${build_variant}_${date +%Y%m%d} || image_name=${build_variant}
+          image_name=images_${build_variant}_${GIT_VERSION} || image_name=images_${build_variant}
           cd ${images_dir}; md5sum *.trx |tee md5sum.txt; 7z a -mx=9 ${image_name}.7z ./*
           echo "image_name=${image_name}" >> $GITHUB_ENV
-          
       - name: Upload images to Artifact
         uses: actions/upload-artifact@v2.2.1
         with:
           name: ${{ env.image_name }}
           path: ${{ env.images_dir }}/*.7z
-          
       - name: Upload images to Releases
         uses: svenstaro/upload-release-action@2.2.0
         with:
