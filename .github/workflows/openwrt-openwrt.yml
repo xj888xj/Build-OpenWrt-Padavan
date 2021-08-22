@@ -4,8 +4,8 @@ name: OpenWrt-openwrt
 on: 
   repository_dispatch:
   workflow_dispatch:        
-#  release:                                                     
-#    types: [published]
+  release:                                                     
+    types: [published]
 #  watch:                                                        
 #    types: [started] 
 
