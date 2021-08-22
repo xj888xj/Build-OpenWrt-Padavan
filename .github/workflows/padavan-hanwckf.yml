@@ -50,7 +50,7 @@ jobs:
           cd /opt/rt-n56u/trunk
           mkdir -p ${images_dir}
           for m in $targets; do fakeroot ./build_firmware_ci $m; \
-          if [ $? = 0 ]; then cp -f images/*.trx ${images_dir}/$m.trx; else exit 1; fi; \
+          if [ $? = 0 ]; then cp -f images/*.trx ${images_dir}/hanwckf_$m.trx; else exit 1; fi; \
           ./clear_tree_simple >/dev/null 2>&1; done
       - name: Create archive
         run: |
