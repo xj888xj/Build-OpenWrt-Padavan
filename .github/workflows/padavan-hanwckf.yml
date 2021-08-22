@@ -59,6 +59,7 @@ jobs:
           image_name=images_${build_variant}_${GIT_VERSION} || image_name=images_${build_variant}
           cd ${images_dir}; md5sum *.trx |tee md5sum.txt; 7z a -mx=9 ${image_name}.7z ./*
           echo "image_name=${image_name}" >> $GITHUB_ENV
+          echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M")"
       - name: Upload images to Artifact
         uses: actions/upload-artifact@v2.2.1
         with:
