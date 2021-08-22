@@ -1,11 +1,11 @@
 name: hanwckf-padavan-CI
  
 on:
-  workflow_dispatch:        
+#  workflow_dispatch:        
   release:                                                     
     types: [published]
-  watch:                                                        
-    types: [started] 
+#  watch:                                                        
+#    types: [started] 
 
 jobs:
   build:
