@@ -3,11 +3,11 @@ name: OpenWrt-openwrt
 
 on: 
   repository_dispatch:
-  workflow_dispatch:  
-  release:                                                   
-    types: [published]
-  watch:                                                      
-    types: [started]
+  workflow_dispatch:        
+#  release:                                                     
+#    types: [published]
+#  watch:                                                        
+#    types: [started] 
 
 env:
   REPO_URL: https://github.com/openwrt/openwrt
